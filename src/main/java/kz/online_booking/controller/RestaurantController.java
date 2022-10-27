@@ -12,23 +12,18 @@ public class RestaurantController {
 
     private final RestaurantRepository restaurantRepository;
 
-    @GetMapping("/getById")
-    public Restaurant getRestaurantById(Long id) {
+    @GetMapping("/get")
+    public Restaurant getRestaurantById(@RequestParam("id") Long id) {
         return restaurantRepository.getRestaurantById(id);
     }
 
-    @GetMapping("/getAll")
-    public Restaurant[] getRestaurants() {
-        return restaurantRepository.getAllRestaurants();
-    }
-
-    @PostMapping("/saveRestaurant")
+    @PostMapping("/save")
     public void saveRestaurant(@RequestBody Restaurant restaurant) {
         restaurantRepository.save(restaurant);
     }
 
-    @DeleteMapping("/deleteById")
-    public void deleteRestaurant(@RequestParam Long id) {
+    @DeleteMapping("/delete")
+    public void deleteRestaurant(@RequestParam("id") Long id) {
         restaurantRepository.deleteById(id);
     }
 }

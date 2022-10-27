@@ -9,5 +9,4 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     Restaurant getRestaurantById(Long id);
 
-    Restaurant[] getAllRestaurants();
 }
