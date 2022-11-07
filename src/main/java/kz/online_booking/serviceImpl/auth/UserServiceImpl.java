@@ -24,8 +24,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-  private final UserRepository userRepository;
-  private final RoleRepository roleRepository;
+  private final UserRepository  userRepository;
+  private final RoleRepository  roleRepository;
   private final PasswordEncoder passwordEncoder;
 
 
@@ -66,6 +66,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     User user = userRepository.findByUsername(username);
     Role role = roleRepository.findByName(roleName);
     user.getRoles().add(role);
+  }
+
+  @Override
+  public User getUser(String username) {
+    log.info("Fetching user {}", username);
+    return userRepository.findByUsername(username);
   }
 
   @Override
