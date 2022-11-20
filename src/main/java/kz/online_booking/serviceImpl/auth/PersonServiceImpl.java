@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.transaction.Transactional;
-import kz.online_booking.model.auth.Role;
 import kz.online_booking.model.auth.Person;
+import kz.online_booking.model.auth.Role;
+import kz.online_booking.repository.auth.PersonRepository;
 import kz.online_booking.repository.auth.RoleRepository;
-import kz.online_booking.repository.auth.UserRepository;
 import kz.online_booking.service.auth.PersonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +24,14 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PersonServiceImpl implements PersonService, UserDetailsService {
 
-  private final UserRepository userRepository;
-  private final RoleRepository roleRepository;
-  private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  private final PersonRepository personRepository;
+  private final RoleRepository   roleRepository;
+  private final PasswordEncoder passwordEncoder;
 
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Person person = userRepository.findByUsername(username);
+    Person person = personRepository.findByUsername(username);
 
     if (person == null) {
       log.error("User not found in the database");
@@ -52,7 +51,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
   public Person saveUser(Person person) {
     log.info("Saving new user {} to the database", person.getName());
     person.setPassword(passwordEncoder.encode(person.getPassword()));
-    return userRepository.save(person);
+    return personRepository.save(person);
   }
 
   @Override
@@ -64,7 +63,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
   @Override
   public void addRoleToUser(String username, String roleName) {
     log.info("Adding role {} to user {}", roleName, username);
-    Person person = userRepository.findByUsername(username);
+    Person person = personRepository.findByUsername(username);
     Role   role   = roleRepository.findByName(roleName);
     person.getRoles().add(role);
   }
@@ -72,12 +71,12 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
   @Override
   public Person getUser(String username) {
     log.info("Fetching user {}", username);
-    return userRepository.findByUsername(username);
+    return personRepository.findByUsername(username);
   }
 
   @Override
   public List<Person> getUsers() {
     log.info("Fetching all users");
-    return userRepository.findAll();
+    return personRepository.findAll();
   }
 }
