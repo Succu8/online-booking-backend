@@ -1,6 +1,6 @@
 package kz.online_booking.controller;
 
-import kz.online_booking.dao.Client;
+import kz.online_booking.model.dao.Client;
 import kz.online_booking.repository.TestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -5,16 +5,17 @@ import java.util.Collection;
 import java.util.List;
 import javax.transaction.Transactional;
 import kz.online_booking.model.auth.Role;
-import kz.online_booking.model.auth.User;
+import kz.online_booking.model.auth.Person;
 import kz.online_booking.repository.auth.RoleRepository;
 import kz.online_booking.repository.auth.UserRepository;
-import kz.online_booking.service.auth.UserService;
+import kz.online_booking.service.auth.PersonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +23,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class PersonServiceImpl implements PersonService, UserDetailsService {
 
-  private final UserRepository  userRepository;
-  private final RoleRepository  roleRepository;
-  private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(username);
+    Person person = userRepository.findByUsername(username);
 
-    if (user == null) {
+    if (person == null) {
       log.error("User not found in the database");
       throw new UsernameNotFoundException("User not found in the database");
     } else {
@@ -41,17 +42,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+    person.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
 
     return new org.springframework.security.core.userdetails
-      .User(user.getUsername(), user.getPassword(), authorities);
+      .User(person.getUsername(), person.getPassword(), authorities);
   }
 
   @Override
-  public User saveUser(User user) {
-    log.info("Saving new user {} to the database", user.getName());
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    return userRepository.save(user);
+  public Person saveUser(Person person) {
+    log.info("Saving new user {} to the database", person.getName());
+    person.setPassword(passwordEncoder.encode(person.getPassword()));
+    return userRepository.save(person);
   }
 
   @Override
@@ -63,19 +64,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   @Override
   public void addRoleToUser(String username, String roleName) {
     log.info("Adding role {} to user {}", roleName, username);
-    User user = userRepository.findByUsername(username);
-    Role role = roleRepository.findByName(roleName);
-    user.getRoles().add(role);
+    Person person = userRepository.findByUsername(username);
+    Role   role   = roleRepository.findByName(roleName);
+    person.getRoles().add(role);
   }
 
   @Override
-  public User getUser(String username) {
+  public Person getUser(String username) {
     log.info("Fetching user {}", username);
     return userRepository.findByUsername(username);
   }
 
   @Override
-  public List<User> getUsers() {
+  public List<Person> getUsers() {
     log.info("Fetching all users");
     return userRepository.findAll();
   }

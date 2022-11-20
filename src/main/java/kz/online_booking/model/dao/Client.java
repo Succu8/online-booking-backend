@@ -1,4 +1,4 @@
-package kz.online_booking.dao;
+package kz.online_booking.model.dao;
 
 
 import javax.persistence.Entity;

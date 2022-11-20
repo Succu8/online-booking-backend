@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import kz.online_booking.model.auth.Role;
-import kz.online_booking.model.auth.User;
-import kz.online_booking.service.auth.UserService;
+import kz.online_booking.model.auth.Person;
+import kz.online_booking.service.auth.PersonService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,21 +34,21 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class UserController {
+public class PersonController {
 
-  private final UserService userService;
+  private final PersonService userService;
 
   @GetMapping("/users")
-  public ResponseEntity<List<User>> getUsers() {
+  public ResponseEntity<List<Person>> getUsers() {
     return ResponseEntity.ok().body(userService.getUsers());
   }
 
   @PostMapping("/user/save")
-  public ResponseEntity<User> saveUser(@RequestBody User user) {
+  public ResponseEntity<Person> saveUser(@RequestBody Person person) {
     URI uri = URI.create(ServletUriComponentsBuilder
                            .fromCurrentContextPath().path("/api/user/save")
                            .toUriString());
-    return ResponseEntity.created(uri).body(userService.saveUser(user));
+    return ResponseEntity.created(uri).body(userService.saveUser(person));
   }
 
   @PostMapping("/role/save")
@@ -76,16 +76,16 @@ public class UserController {
         Algorithm   algorithm     = Algorithm.HMAC256("secret".getBytes());
         JWTVerifier verifier      = JWT.require(algorithm).build();
         DecodedJWT  decodedJWT    = verifier.verify(refresh_token);
-        var         username      = decodedJWT.getSubject();
-        User        user          = userService.getUser(username);
+        var    username = decodedJWT.getSubject();
+        Person person   = userService.getUser(username);
 
         String access_token = JWT.create()
-                                 .withSubject(user.getUsername())
+                                 .withSubject(person.getUsername())
                                  .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                                  .withIssuer(request.getRequestURL().toString())
-                                 .withClaim("roles", user.getRoles()
-                                                         .stream().map(Role::getName)
-                                                         .collect(Collectors.toList()))
+                                 .withClaim("roles", person.getRoles()
+                                                           .stream().map(Role::getName)
+                                                           .collect(Collectors.toList()))
                                  .sign(algorithm);
 
 

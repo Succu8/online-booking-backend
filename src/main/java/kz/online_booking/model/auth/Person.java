@@ -1,7 +1,7 @@
 package kz.online_booking.model.auth;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,7 +17,7 @@ import static javax.persistence.GenerationType.AUTO;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Person {
   @Id
   @GeneratedValue(strategy = AUTO)
   private Long             id;
@@ -25,6 +25,6 @@ public class User {
   private String           username;
   private String           password;
   @ManyToMany(fetch = EAGER)
-  private Collection<Role> roles = new ArrayList<>();
+  private List<Role> roles = new ArrayList<>();
 }
 

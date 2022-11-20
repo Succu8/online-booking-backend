@@ -2,18 +2,18 @@ package kz.online_booking.service.auth;
 
 import java.util.List;
 import kz.online_booking.model.auth.Role;
-import kz.online_booking.model.auth.User;
+import kz.online_booking.model.auth.Person;
 
-public interface UserService {
+public interface PersonService {
 
-  User saveUser(User user);
+  Person saveUser(Person person);
 
   Role saveRole(Role role);
 
   void addRoleToUser(String username, String roleName);
 
-  User getUser(String username);
+  Person getUser(String username);
 
-  List<User> getUsers();
+  List<Person> getUsers();
 
 }

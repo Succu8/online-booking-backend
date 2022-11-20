@@ -1,6 +1,6 @@
 package kz.online_booking.repository;
 
-import kz.online_booking.dao.Client;
+import kz.online_booking.model.dao.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
